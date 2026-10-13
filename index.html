@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Employee Off-boarding – Exit Formalities Checklist</title>
+<style>
+  :root { --ink:#172033; --muted:#5d687b; --line:#dce2eb; --blue:#155eef; --blue-soft:#eef4ff; --bg:#f5f7fb; --green:#067647; --green-soft:#ecfdf3; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+  .wrap { max-width:1000px; margin:0 auto; padding:28px 18px 48px; }
+  header { background:#142b55; color:#fff; padding:28px; border-radius:16px; box-shadow:0 8px 24px #142b551c; }
+  header h1 { margin:0 0 8px; font-size:clamp(1.45rem,3vw,2rem); }
+  header p { margin:0; color:#e0eaff; }
+  .panel { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px; margin-top:18px; }
+  .progress-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .progress-head h2 { font-size:1.08rem; margin:0; }
+  .percent { font-weight:700; color:var(--blue); font-size:1.2rem; }
+  .track { height:10px; background:#e8edf5; border-radius:99px; overflow:hidden; margin:12px 0 8px; }
+  .bar { height:100%; width:0%; background:var(--blue); transition:width .2s ease; }
+  .counts { color:var(--muted); font-size:.92rem; }
+  .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  button { border:1px solid #cbd5e1; border-radius:9px; background:#fff; color:var(--ink); padding:10px 14px; font-weight:700; cursor:pointer; }
+  button.primary { background:var(--blue); color:#fff; border-color:var(--blue); }
+  button:hover { filter:brightness(.97); }
+  .section { background:#fff; border:1px solid var(--line); border-radius:14px; margin-top:16px; overflow:hidden; }
+  .section h2 { font-size:1.08rem; margin:0; padding:16px 18px; background:#f8faff; border-bottom:1px solid var(--line); }
+  .task { padding:15px 18px; border-bottom:1px solid #edf0f5; display:grid; grid-template-columns:24px minmax(0,1fr); gap:12px; align-items:start; }
+  .task:last-child { border-bottom:0; }
+  .task input[type=checkbox] { width:19px; height:19px; margin:3px 0 0; accent-color:var(--blue); cursor:pointer; }
+  .task label { cursor:pointer; }
+  .task.done .task-text { color:#687386; text-decoration:line-through; }
+  .owner { display:inline-block; margin-top:7px; font-size:.83rem; color:#344054; background:#f0f4fa; border-radius:6px; padding:3px 8px; }
+  .task-status { display:inline-block; margin-left:6px; font-size:.78rem; font-weight:700; color:#667085; }
+  .task.done .task-status { color:var(--green); }
+  .fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+  .field label { display:block; font-size:.88rem; color:var(--muted); margin-bottom:5px; font-weight:700; }
+  .field input, .field select { width:100%; padding:11px 12px; border:1px solid #cbd5e1; border-radius:8px; font:inherit; background:#fff; color:var(--ink); }
+  .overall { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .overall label { font-weight:700; }
+  .overall select { padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font:inherit; background:#fff; }
+  .note { color:var(--muted); font-size:.88rem; margin:12px 0 0; }
+  footer { text-align:center; color:var(--muted); font-size:.82rem; margin-top:18px; }
+  @media (max-width:600px) { .fields { grid-template-columns:1fr; } header { padding:22px; } .panel { padding:16px; } }
+  @media print { body { background:#fff; } .wrap { max-width:none; padding:0; } header { background:#fff; color:#000; border:1px solid #aaa; box-shadow:none; } header p { color:#333; } .actions { display:none; } .section, .panel { break-inside:avoid; box-shadow:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Employee Off-boarding – Exit Formalities Checklist</h1>
+    <p>Please complete and verify the following activities as part of the employee off-boarding and exit process.</p>
+  </header>
+
+  <section class="panel" aria-label="Completion progress">
+    <div class="progress-head">
+      <h2>Checklist completion</h2>
+      <span class="percent" id="percent">0%</span>
+    </div>
+    <div class="track" role="progressbar" aria-label="Checklist completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressTrack"><div class="bar" id="progressBar"></div></div>
+    <div class="counts" id="counts">0 of 15 tasks completed</div>
+    <div class="actions">
+      <button class="primary" id="saveBtn" type="button">Save progress on this device</button>
+      <button id="printBtn" type="button">Print checklist</button>
+      <button id="resetBtn" type="button">Reset checklist</button>
+    </div>
+    <p class="note" id="saveMessage">Progress is not saved automatically. Use “Save progress” to store it in this browser.</p>
+  </section>
+
+  <section class="panel">
+    <h2 style="margin-top:0">Employee details</h2>
+    <div class="fields">
+      <div class="field"><label for="employeeName">Employee Name</label><input id="employeeName" type="text" placeholder="Enter employee name"></div>
+      <div class="field"><label for="employeeId">Employee ID</label><input id="employeeId" type="text" placeholder="Enter employee ID"></div>
+      <div class="field"><label for="lwd">Last Working Day (LWD)</label><input id="lwd" type="date"></div>
+      <div class="field"><label for="manager">People Manager</label><input id="manager" type="text" placeholder="Enter People Manager"></div>
+      <div class="field"><label for="closureDate">Closure Date</label><input id="closureDate" type="date"></div>
+    </div>
+  </section>
+
+  <div id="checklist"></div>
+
+  <section class="panel">
+    <h2 style="margin-top:0">Final Off-boarding Confirmation</h2>
+    <div class="overall">
+      <label for="overallStatus">Overall Status:</label>
+      <select id="overallStatus">
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+      <span class="counts" id="finalSummary">0 of 15 tasks completed</span>
+    </div>
+    <p class="note">Confirm that all applicable tickets, asset returns, access revocations, handover activities, and timesheet submissions are complete before marking the process as completed.</p>
+  </section>
+  <footer>Employee off-boarding checklist • Complete each item and confirm the responsible owner’s requirements.</footer>
+</div>
+<script>
+const sections = [
+ { title:"1. Resignation & Exit Confirmation", tasks:[
+  ["Confirm that the resignation has been acknowledged.","People Manager / HR"],
+  ["Confirm the employee’s Last Working Day (LWD).","People Manager / HR"]
+ ]},
+ { title:"2. Knowledge Transfer & Handover", tasks:[
+  ["Ensure knowledge transfer (KT) is completed.","People Manager / Project Lead"],
+  ["Confirm that all project responsibilities, tasks, documentation, and pending activities have been handed over to the appropriate team member.","People Manager / Project Lead"]
+ ]},
+ { title:"3. Company Asset Return", tasks:[
+  ["Collect all company-issued assets from the employee.","IT Asset Management / IT Support"],
+  ["Verify the condition of the returned assets and record the asset details, where applicable.","IT Asset Management / IT Support"]
+ ]},
+ { title:"4. Access Card Return", tasks:[
+  ["Collect the employee’s access card / photo badge.","Employee / Security Team"],
+  ["Confirm that the card has been returned to the Security team as required.","Security Team"]
+ ]},
+ { title:"5. Account & System Access Revocation", tasks:[
+  ["Ensure the employee’s corporate email account is disabled or revoked as per the exit process.","IT Support / IT Operations"],
+  ["Ensure all required system, application, network, and other access permissions are revoked.","IT Operations / Application Owners"]
+ ]},
+ { title:"6. Timesheet Submission & ILC Clocking", tasks:[
+  ["Complete and submit the attendance sheet up to the Last Working Day.","Employee / People Manager"],
+  ["Ensure all pending ILC clocking entries are completed and submitted.","Employee / People Manager"],
+  ["Submit the CRTS and timesheet to the respective consultancy up to the Last Working Day.","Employee / Respective Consultancy"],
+  ["Verify that all attendance, clocking, and timesheet records are accurate and up to date.","Employee / People Manager / Consultancy"]
+ ]},
+ { title:"7. Off-boarding Closure", tasks:[
+  ["Verify that all required exit formalities have been completed.","People Manager / HR / IT Operations"],
+  ["Confirm that all applicable tickets, asset returns, access revocations, handover activities, and timesheet submissions are completed.","People Manager / IT Operations"],
+  ["Obtain off-boarding closure confirmation from the relevant People Manager / IT team.","People Manager / IT Operations"]
+ ]}
+];
+const list = document.getElementById("checklist");
+let taskIndex = 0;
+sections.forEach((section, s) => {
+  const article = document.createElement("section");
+  article.className = "section";
+  const heading = document.createElement("h2");
+  heading.textContent = section.title;
+  article.appendChild(heading);
+  section.tasks.forEach((task, t) => {
+    const id = `task-${s}-${t}`;
+    const row = document.createElement("div");
+    row.className = "task";
+    const cb = document.createElement("input");
+    cb.type = "checkbox"; cb.id = id; cb.className = "task-checkbox";
+    cb.setAttribute("aria-label", task[0]);
+    const content = document.createElement("div");
+    const label = document.createElement("label"); label.htmlFor = id;
+    const taskText = document.createElement("span"); taskText.className = "task-text"; taskText.textContent = task[0];
+    const status = document.createElement("span"); status.className = "task-status"; status.textContent = "Pending";
+    label.append(taskText, status);
+    const owner = document.createElement("div"); owner.className = "owner"; owner.textContent = "Responsible owner: " + task[1];
+    content.append(label, document.createElement("br"), owner);
+    row.append(cb, content); article.appendChild(row);
+    cb.addEventListener("change", () => { updateRow(cb); updateProgress(); });
+    taskIndex++;
+  });
+  list.appendChild(article);
+});
+const total = document.querySelectorAll(".task-checkbox").length;
+function updateRow(cb) {
+  const row = cb.closest(".task");
+  row.classList.toggle("done", cb.checked);
+  row.querySelector(".task-status").textContent = cb.checked ? "Completed" : "Pending";
+}
+function updateProgress() {
+  const boxes = [...document.querySelectorAll(".task-checkbox")];
+  const completed = boxes.filter(b => b.checked).length;
+  const pct = Math.round(completed / boxes.length * 100);
+  document.getElementById("percent").textContent = pct + "%";
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressTrack").setAttribute("aria-valuenow", pct);
+  document.getElementById("counts").textContent = `${completed} of ${total} tasks completed`;
+  document.getElementById("finalSummary").textContent = `${completed} of ${total} tasks completed`;
+  const status = document.getElementById("overallStatus");
+  if (completed === total) status.value = "Completed";
+  else if (completed > 0 && status.value === "Pending") status.value = "In Progress";
+}
+function currentState() {
+  return {
+    checks: [...document.querySelectorAll(".task-checkbox")].map(b => b.checked),
+    employeeName: document.getElementById("employeeName").value,
+    employeeId: document.getElementById("employeeId").value,
+    lwd: document.getElementById("lwd").value,
+    manager: document.getElementById("manager").value,
+    closureDate: document.getElementById("closureDate").value,
+    overallStatus: document.getElementById("overallStatus").value
+  };
+}
+function loadState(state) {
+  if (!state) return;
+  document.querySelectorAll(".task-checkbox").forEach((b, i) => { b.checked = !!state.checks?.[i]; updateRow(b); });
+  ["employeeName","employeeId","lwd","manager","closureDate","overallStatus"].forEach(id => {
+    if (state[id] !== undefined) document.getElementById(id).value = state[id];
+  });
+  updateProgress();
+  if (state.overallStatus) document.getElementById("overallStatus").value = state.overallStatus;
+}
+document.getElementById("saveBtn").addEventListener("click", () => {
+  try {
+    localStorage.setItem("employeeOffboardingChecklistV1", JSON.stringify(currentState()));
+    document.getElementById("saveMessage").textContent = "Progress saved in this browser on this device.";
+  } catch (e) {
+    document.getElementById("saveMessage").textContent = "Browser storage is unavailable. You can still print this checklist.";
+  }
+});
+document.getElementById("printBtn").addEventListener("click", () => window.print());
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (!confirm("Reset all checklist items and employee details? This cannot be undone unless you have saved a copy.")) return;
+  document.querySelectorAll(".task-checkbox").forEach(b => { b.checked = false; updateRow(b); });
+  ["employeeName","employeeId","lwd","manager","closureDate"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("overallStatus").value = "Pending";
+  updateProgress();
+  document.getElementById("saveMessage").textContent = "Checklist reset. Save progress if you want to keep this blank state.";
+});
+try {
+  const saved = localStorage.getItem("employeeOffboardingChecklistV1");
+  if (saved) loadState(JSON.parse(saved));
+} catch (e) {}
+updateProgress();
+</script>
+</body>
+</html>
